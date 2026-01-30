@@ -1,12 +1,18 @@
 """
 API views for the fuel optimizer.
 """
+from django.shortcuts import render
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .serializers import RouteRequestSerializer, RouteResponseSerializer
 from .services import RoutingService, FuelOptimizerService
+
+
+def map_view(request):
+    """Render the interactive map interface."""
+    return render(request, 'fuel_optimizer/map.html')
 
 
 class CalculateRouteView(APIView):
