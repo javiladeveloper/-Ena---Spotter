@@ -1,9 +1,5 @@
-"""
-Management command to import fuel station data from CSV.
-"""
 import csv
 from django.core.management.base import BaseCommand
-
 from fuel_optimizer.models import FuelStation
 
 
@@ -11,27 +7,16 @@ class Command(BaseCommand):
     help = "Import fuel station data from CSV file"
 
     def add_arguments(self, parser):
-        parser.add_argument(
-            "csv_file",
-            type=str,
-            help="Path to the CSV file with fuel station data",
-        )
-        parser.add_argument(
-            "--batch-size",
-            type=int,
-            default=1000,
-            help="Batch size for bulk operations",
-        )
+        parser.add_argument("csv_file", type=str)
+        parser.add_argument("--batch-size", type=int, default=1000)
 
     def handle(self, *args, **options):
         csv_file = options["csv_file"]
         batch_size = options["batch_size"]
 
-        # Clear existing data
         self.stdout.write("Clearing existing fuel station data...")
         FuelStation.objects.all().delete()
 
-        # Read and process CSV
         self.stdout.write(f"Reading data from {csv_file}...")
 
         stations_to_create = []
@@ -41,7 +26,6 @@ class Command(BaseCommand):
             reader = csv.DictReader(f)
 
             for row in reader:
-                # Create unique key to avoid duplicates
                 unique_key = (
                     row["OPIS Truckstop ID"],
                     row["Truckstop Name"],
@@ -70,16 +54,11 @@ class Command(BaseCommand):
 
         self.stdout.write(f"Found {len(stations_to_create)} unique stations")
 
-        # Bulk create stations
         self.stdout.write("Importing stations to database...")
         FuelStation.objects.bulk_create(stations_to_create, batch_size=batch_size)
 
         self.stdout.write(
-            self.style.SUCCESS(
-                f"Successfully imported {len(stations_to_create)} fuel stations"
-            )
+            self.style.SUCCESS(f"Successfully imported {len(stations_to_create)} fuel stations")
         )
 
-        self.stdout.write(
-            "\nTo add coordinates, run: python manage.py geocode_stations --use-state-centroids"
-        )
+        self.stdout.write("\nTo add coordinates, run: python manage.py geocode_stations --use-state-centroids")
