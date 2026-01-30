@@ -150,3 +150,26 @@ Vehicle settings in `settings.py`:
 |---------|---------|
 | `VEHICLE_MAX_RANGE_MILES` | 500 |
 | `VEHICLE_MPG` | 10 |
+
+## Known Limitations
+
+**Station Coordinates:** The CSV data only contains city and state for each station, not exact addresses with coordinates. Currently, stations are geocoded using state centroids (approximate center of each state), which means:
+
+- Map markers show approximate locations, not exact positions
+- Stations appear at state centers rather than along the actual route
+- Detour calculations to reach stations are not available
+
+**Future Improvements (with real coordinates):**
+- Geocode each station address for exact lat/lon
+- Show stations directly on the route
+- Calculate and display detour distance to each station
+- Factor detour time into total trip duration
+
+## Web Interface
+
+Visit `http://localhost:8000/` for an interactive map that visualizes:
+- The driving route (blue line)
+- Start point (green marker)
+- Destination (red marker)
+- Fuel stops (orange numbered markers)
+- Trip summary and cost breakdown
